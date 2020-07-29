@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
+const keys = require("../apikeys");
 
 exports.signup = (req, res, next) => {
   const error = validationResult(req);
@@ -53,7 +54,7 @@ exports.login = (req, res, next) => {
           email: loadeduser.email,
           userId: loadeduser._id.toString(),
         },
-        "Karnal@18",
+        keys.bcryptSecret,
         { expiresIn: "1h" }
       );
       res.status(200).json({ token: token, userId: loadeduser._id.toString() });

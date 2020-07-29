@@ -5,6 +5,7 @@ const path = require("path");
 
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
+const keys = require("./apikeys");
 
 const app = express();
 
@@ -32,9 +33,7 @@ app.use((err, req, res, next) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://node-user:Karnal18@cluster0-sgm7m.mongodb.net/test?retryWrites=true&w=majority"
-  )
+  .connect(keys.mongoURI)
   .then(() => {
     console.log("Database Connected");
     const server = app.listen(8080);
