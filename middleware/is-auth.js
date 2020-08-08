@@ -1,3 +1,4 @@
+const { bcryptSecret } = require("../apikeys");
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
@@ -10,7 +11,7 @@ module.exports = (req, res, next) => {
   }
   token = token.split(" ")[1];
   try {
-    decodedToken = jwt.verify(token, "Karnal@18");
+    decodedToken = jwt.verify(token, bcryptSecret);
   } catch (err) {
     err.statusCode = 500;
     throw err;
