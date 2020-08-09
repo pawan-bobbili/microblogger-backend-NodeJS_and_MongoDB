@@ -55,7 +55,7 @@ exports.getPost = (req, res, next) => {
 };
 
 exports.createPost = (req, res, next) => {
-  const post = new Post({
+  let post = new Post({
     title: req.body.title,
     content: req.body.content,
     imageUrl: req.file.filename,
@@ -65,6 +65,7 @@ exports.createPost = (req, res, next) => {
   return post
     .save()
     .then((result) => {
+      post = result;
       return User.findById(req.userId);
     })
     .then((user) => {
@@ -73,6 +74,7 @@ exports.createPost = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
+      console.log(post);
       io.getIO().emit("posts", {
         action: "create",
         post: { ...post, creator: { _id: req.userId, name: creator.name } },
@@ -100,33 +102,36 @@ exports.editPost = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  return Post.findById(postId).then((post) => {
-    if (!post) {
-      const error = new Error("No Post Found to edit");
-      error.statusCode = 404;
-      throw error;
-    }
-    if (post.creator.toString() !== req.userId) {
-      const error = new Error("Authorization failed");
-      error.statusCode = 403;
-      throw error;
-    }
-    if (post.imageUrl !== imageUrl) {
-      deleteImage(post.imageUrl);
-      post.imageUrl = imageUrl;
-    }
-    post.title = req.body.title;
-    post.content = req.body.content;
-    return post
-      .save()
-      .then((post) => {
-        res.status(200).json({ post });
-      })
-      .catch((err) => {
-        //console.log(err);
-        next(err);
-      });
-  });
+  return Post.findById(postId)
+    .then((post) => {
+      if (!post) {
+        const error = new Error("No Post Found to edit");
+        error.statusCode = 404;
+        throw error;
+      }
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error("Authorization failed");
+        error.statusCode = 403;
+        throw error;
+      }
+      if (post.imageUrl !== imageUrl) {
+        deleteImage(post.imageUrl);
+        post.imageUrl = imageUrl;
+      }
+      post.title = req.body.title;
+      post.content = req.body.content;
+      return post
+        .save()
+        .then((post) => {
+          io.getIO().emit("posts", { action: "update", post: post });
+          res.status(200).json({ post });
+        })
+        .catch((err) => {
+          //console.log(err);
+          next(err);
+        });
+    })
+    .catch((err) => next(err));
 };
 
 exports.deletePost = (req, res, next) => {
@@ -155,6 +160,7 @@ exports.deletePost = (req, res, next) => {
       return userD.save();
     })
     .then((result) => {
+      io.getIO().emit("posts", { action: "delete", post: req.params.postId });
       res.status(201).json({ post: deletedPost });
     })
     .catch((err) => {
