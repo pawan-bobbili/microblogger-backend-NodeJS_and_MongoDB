@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const { nextTick } = require("process");
 
 const Post = require("../models/post");
 const User = require("../models/user");

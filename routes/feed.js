@@ -21,13 +21,10 @@ const postStorage = multer.diskStorage({
 });
 const createPostDataHandler = multer({ storage: postStorage }).single("image");
 
-// GET /feed/posts
 router.get("/posts", isAuth, feedController.getPosts);
 
-//GET /feed/post
 router.get("/post/:postId", isAuth, feedController.getPost);
 
-// POST /feed/post
 router.post(
   "/post",
   isAuth,
