@@ -5,12 +5,19 @@ An online realtime blogging system.
 ## Dependency
 
 Code for the Frontend part of this application can be found here:
+<<<<<<< HEAD
 [https://github.com/pawan-bobbili/microblogger-frontend-ReactJs](https://github.com/pawan-bobbili/microblogger-frontend-ReactJs)
 
 ## Description
 
 -> An online microblogger where users can login and see / create posts with images.
 
+=======
+      [https://github.com/pawan-bobbili/microblogger-frontend-ReactJs](https://github.com/pawan-bobbili/microblogger-frontend-ReactJs)
+
+## Description
+
+>>>>>>> 868cb2af25180f683a7f8f529734dd8ac6bb4094
 -> This part of the project is build on NodeJs(expressJS).
 
 -> MongoDB is used as the server's database.
